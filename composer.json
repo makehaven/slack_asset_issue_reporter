@@ -1,0 +1,6 @@
+{
+    "name": "makehaven/slack_asset_issue_reporter",
+    "type": "drupal-custom-module",
+    "description": "Sends Slack notifications for asset issue reports submitted via webforms.",
+    "license": "GPL-2.0-or-later"
+}

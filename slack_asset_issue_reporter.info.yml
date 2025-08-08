@@ -1,0 +1,9 @@
+name: Slack Asset Issue Reporter
+type: module
+description: 'Sends Slack notifications for asset issue reports submitted via webforms.'
+core_version_requirement: ^10
+version: 1.0
+package: Custom
+dependencies:
+  - drupal:slack_connector
+  - drupal:webform
