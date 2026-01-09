@@ -3,7 +3,7 @@ type: module
 description: 'Sends Slack notifications for asset issue reports submitted via webforms.'
 core_version_requirement: ^10 || ^11
 version: '1.0'
-package: Custom
+package: Makerspace
 dependencies:
   - drupal:slack_connector
   - drupal:webform
