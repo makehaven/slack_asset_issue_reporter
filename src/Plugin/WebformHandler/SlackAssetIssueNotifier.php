@@ -51,14 +51,13 @@ class SlackAssetIssueNotifier extends WebformHandlerBase {
       }
     }
 
-    // Set a default channel if none was determined.
-    if (empty($channel)) {
-      $channel = '#default-channel';
-    } else {
-      // Ensure the channel string has a '#' prefix.
-      if (strpos($channel, '#') !== 0) {
-        $channel = '#' . $channel;
-      }
+    $tool_specific_channel = !empty($channel);
+    if (!$tool_specific_channel) {
+      $channel = trim((string) Drupal::config('slack_connector.settings')->get('asset_issue_fallback_channel'));
+    }
+
+    if ($channel !== '' && strpos($channel, '#') !== 0) {
+      $channel = '#' . $channel;
     }
 
     // Build the message.
@@ -70,6 +69,11 @@ class SlackAssetIssueNotifier extends WebformHandlerBase {
     $message .= "*Equipment Name:* $equipment_name\n";
     $message .= "*Issue Type:* $issue_type\n";
     $message .= "*Description:* $description\n";
+
+    if ($channel === '') {
+      Drupal::messenger()->addStatus($this->t('Issue report saved. No Slack channel is configured for this tool, and no fallback channel is configured.'));
+      return;
+    }
 
     // Post to Slack using the helper.
     $result = SlackAssetIssueNotifierHelper::postToSlack($channel, $message);
@@ -94,8 +98,13 @@ class SlackAssetIssueNotifier extends WebformHandlerBase {
         '%channel' => $channel_link,
         '%preview' => $message,
       ])));
-    } else {
-      Drupal::messenger()->addMessage($this->t("Failed to post Slack message to %channel.", ['%channel' => $channel]), 'error');
+    }
+    else {
+      $destination_type = $tool_specific_channel ? $this->t('tool-specific channel') : $this->t('fallback channel');
+      Drupal::messenger()->addMessage($this->t("Failed to post Slack message to %channel (%destination_type).", [
+        '%channel' => $channel,
+        '%destination_type' => $destination_type,
+      ]), 'error');
     }
   }
 
