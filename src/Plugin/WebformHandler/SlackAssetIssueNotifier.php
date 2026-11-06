@@ -30,8 +30,9 @@ class SlackAssetIssueNotifier extends WebformHandlerBase {
     // Get the submission data.
     $data = $webform_submission->getData();
 
-    // Retrieve asset_nid from the URL.
-    $asset_nid = Drupal::request()->query->get('asset_nid');
+    // The submission names the tool. The URL is the fallback for older links;
+    // a report sent from a station has no such URL.
+    $asset_nid = !empty($data['asset_nid']) ? $data['asset_nid'] : Drupal::request()->query->get('asset_nid');
     $channel = '';
 
     if ($asset_nid) {
